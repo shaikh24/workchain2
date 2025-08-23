@@ -1,0 +1,8 @@
+{
+  "name": "workchain-client",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "echo \"static build\" && mkdir -p dist && cp index.html dist/index.html",
+    "start": "node server.js"
+  }
+}
