@@ -12,16 +12,35 @@
       <p>Frontend is bundled and will call the backend API for demo flows.</p>
       <div id="status"></div>
       <script>
+        const API_BASE = "https://workchain2-4.onrender.com";
+
         async function status() {
           try {
-            const res = await fetch('/health');
+            const res = await fetch(`${API_BASE}/health`);
             const j = await res.json();
             document.getElementById('status').innerText = JSON.stringify(j);
           } catch(e) {
             document.getElementById('status').innerText = 'API not reachable: ' + e.message;
           }
         }
+
+        // Example API call for /u2a route
+        async function testU2A() {
+          try {
+            const res = await fetch(`${API_BASE}/api/u2a`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ userId: "12345" })
+            });
+            const data = await res.json();
+            console.log("U2A Response:", data);
+          } catch(e) {
+            console.error("U2A API Error:", e.message);
+          }
+        }
+
         status();
+        testU2A();
       </script>
     </div>
   </body>
