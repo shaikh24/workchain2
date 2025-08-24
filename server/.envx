@@ -1,3 +1,4 @@
 PI_APP_ID=workchain-fd035f17461adda5
 PI_API_KEY=jqjdy5s20xfn9jlvxoosqdmgmjw1qd1xtbxlf3a5pe4bhh7jbqsa79b8qo8pus4n
 PORT=3000
+MONGO_URI=mongodb+srv://shaikhq01:BWH9ierceWPo4u0f@cluster0.iz3gkkl.mongodb.net/?retryWrites=true&w=majority&appName=WorkchainApp
