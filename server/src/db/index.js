@@ -1,4 +1,8 @@
-import Database from 'better-sqlite3';
-import path from 'path';
-const db = new Database(path.join(process.cwd(), 'src', 'db', 'workchain.db'));
-export default db;
+import { connectMongo } from './db/mongo.js';
+
+async function startServer() {
+  const mongoClient = await connectMongo();
+  // MongoDB se collections read/write kar sakte ho
+}
+
+startServer();
