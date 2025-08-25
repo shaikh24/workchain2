@@ -2,46 +2,63 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>WorkChain</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>WorkChain • MVP</title>
+    <link rel="manifest" href="/manifest.json">
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', ()=> navigator.serviceWorker.register('/sw.js'));
+      }
+    </script>
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-router-dom@6/umd/react-router-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
   </head>
-  <body>
-    <div id="app">
-      <h1>WorkChain (Deploy-Ready)</h1>
-      <p>Frontend is bundled and will call the backend API for demo flows.</p>
-      <div id="status"></div>
-      <script>
-        const API_BASE = "https://workchain2-4.onrender.com";
+  <body class="bg-slate-950 text-slate-100">
+    <div id="root"></div>
+    <script type="text/babel">
+      const { BrowserRouter, Routes, Route, Link, useNavigate } = ReactRouterDOM;
 
-        async function status() {
-          try {
-            const res = await fetch(`${API_BASE}/health`);
-            const j = await res.json();
-            document.getElementById('status').innerText = JSON.stringify(j);
-          } catch(e) {
-            document.getElementById('status').innerText = 'API not reachable: ' + e.message;
-          }
-        }
+      // ✅ Backend API base URL
+      const API = window.REACT_APP_API_URL || "https://workchain-project.onrender.com";
 
-        // Example API call for /u2a route
-        async function testU2A() {
-          try {
-            const res = await fetch(`${API_BASE}/api/u2a`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ userId: "12345" })
-            });
-            const data = await res.json();
-            console.log("U2A Response:", data);
-          } catch(e) {
-            console.error("U2A API Error:", e.message);
-          }
-        }
+      const ThemeCtx = React.createContext();
+      function ThemeProvider({children}){
+        const [theme, setTheme] = React.useState(localStorage.getItem('theme') || 'dark');
+        React.useEffect(()=>{
+          document.documentElement.classList.toggle('light', theme==='light');
+          document.body.className = theme==='light' ? 'bg-slate-50 text-slate-900' : 'bg-slate-950 text-slate-100';
+          localStorage.setItem('theme', theme);
+        },[theme]);
+        return <ThemeCtx.Provider value={{theme, setTheme}}>{children}</ThemeCtx.Provider>;
+      }
 
-        status();
-        testU2A();
-      </script>
-    </div>
+      // ✅ API helper with backend URL
+      function useApi(){
+        const token = localStorage.getItem('token');
+        const h = token ? { 'Authorization':'Bearer ' + token, 'Content-Type':'application/json' } : { 'Content-Type':'application/json' };
+        const get = (u)=> fetch(API + '/api' + u, { headers:h }).then(r=>r.json());
+        const post = (u,b)=> fetch(API + '/api' + u,{ method:'POST', headers:h, body:JSON.stringify(b) }).then(r=>r.json());
+        const put = (u,b)=> fetch(API + '/api' + u,{ method:'PUT', headers:h, body:JSON.stringify(b) }).then(r=>r.json());
+        return { get, post, put };
+      }
+
+      function App(){
+        return (
+          <BrowserRouter>
+            <ThemeProvider>
+              <Routes>
+                <Route path="/" element={<h1 className="text-center text-3xl mt-20">🚀 WorkChain Frontend Connected!</h1>} />
+              </Routes>
+            </ThemeProvider>
+          </BrowserRouter>
+        );
+      }
+
+      ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+    </script>
   </body>
 </html>
